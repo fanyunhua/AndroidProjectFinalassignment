@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.fanyuhua.finalassignment.R;
 /**
@@ -20,13 +21,18 @@ import com.fanyuhua.finalassignment.R;
 public class User extends Fragment {
     private Button wuliu,lishi,jilu,exit;
     private SharedPreferences sp;
+    private SharedPreferences sp2;
+    TextView usernameTV;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.acticity_user,null);
         sp = this.getActivity().getSharedPreferences("state",0);
+        sp2 = this.getActivity().getSharedPreferences("setting",0);
+        String name = sp2.getString("user","");
 
         initView(view);
+        usernameTV.setText(name);
         initListener();
         return view;
     }
@@ -46,5 +52,6 @@ public class User extends Fragment {
 
     private void initView(View view) {
         exit = view.findViewById(R.id.button4);
+        usernameTV = view.findViewById(R.id.usernameTV);
     }
 }
