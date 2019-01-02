@@ -1,54 +1,55 @@
 package com.fanyuhua.finalassignment.tab;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.slice.Slice;
-import android.content.Context;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.icu.text.UnicodeSetSpanner;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.fanyuhua.finalassignment.MainActivity;
 import com.fanyuhua.finalassignment.R;
-
-import static android.support.v4.content.ContextCompat.getSystemService;
 
 
 public class Add extends Fragment {
     private ImageView imageView3;
-    private  Button ok;
+    private  Button ok,stop;
     private EditText name,time;
     private TextView tv;
+    //播放闹钟
+    private MediaPlayer mPlayer;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.avtivity_add,null);
+
         //初始化视图
         initView(view);
         //初始化事件函数
         initEvent();
+        mPlayer = MediaPlayer.create(getContext(),R.raw.ddr);
 
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        } else {
+            //初始化播放器 MediaPlayer
+        }
         return view;
     }
 
@@ -66,6 +67,22 @@ public class Add extends Fragment {
                 }
                 else
                 {
+                    try {
+                        if (mPlayer != null) {
+                              if (mPlayer.isPlaying())
+                              {
+
+                                  mPlayer.pause();
+                              }
+                              else {
+                                 //                          mPlayer.prepare();
+                                  stop.setVisibility(View.VISIBLE);
+                                  mPlayer.start();
+                                  }
+                        }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                    }
 
                 }
 
@@ -122,6 +139,13 @@ public class Add extends Fragment {
 
             }
         });
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlayer.pause();
+                stop.setVisibility(View.GONE);
+            }
+        });
 
     }
 
@@ -131,7 +155,13 @@ public class Add extends Fragment {
         time = view.findViewById(R.id.event_time);
         time = view.findViewById(R.id.event_time);
         tv = view.findViewById(R.id.textView7);
+        stop = view.findViewById(R.id.Addstop);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
 }
